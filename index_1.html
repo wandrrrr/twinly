@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Twinly — находит твоих бьюти-двойников и то, что им реально помогло.">
+<title>Twinly</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#FBFAF7;
+    --bg-soft:#F3F2FA;
+    --surface:#FFFFFF;
+    --ink:#2A2925;
+    --ink-soft:#726F68;
+    --ink-faint:#A6A29A;
+    --line:#E8E5DE;
+    --accent:#5163FF;
+    --accent-ink:#3543D6;
+    --accent-soft:#ECEEFF;
+    --accent-soft-line:#D8DCFF;
+    --rose:#F2799A;
+    --green:#3FAE7C;
+    --teal:#14ADA8;
+    --sky:#2A9FE8;
+    --amber:#D9A544;
+    --purple:#B968DE;
+    --mint:#2FC79A;
+    --olive:#B4A72E;
+    --shadow: 0 1px 2px rgba(42,41,37,.04), 0 12px 32px -16px rgba(42,41,37,.16);
+    --radius-lg: 32px;
+    --radius-md: 22px;
+    --radius-sm: 14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#18181C;
+      --bg-soft:#1E1F26;
+      --surface:#222329;
+      --ink:#F2F0EA;
+      --ink-soft:#ACA8A0;
+      --ink-faint:#726F68;
+      --line:#34353D;
+      --accent:#8391FF;
+      --accent-ink:#AAB4FF;
+      --accent-soft:#282B4A;
+      --accent-soft-line:#3A3E68;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 20px 40px -20px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#18181C;
+    --bg-soft:#1E1F26;
+    --surface:#222329;
+    --ink:#F2F0EA;
+    --ink-soft:#ACA8A0;
+    --ink-faint:#726F68;
+    --line:#34353D;
+    --accent:#8391FF;
+    --accent-ink:#AAB4FF;
+    --accent-soft:#282B4A;
+    --accent-soft-line:#3A3E68;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 20px 40px -20px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img,svg{max-width:100%;display:block;}
+  a{color:inherit;}
+  h1,h2,h3{font-family:"Unbounded","Inter",sans-serif; margin:0; text-wrap:balance; letter-spacing:-0.01em;}
+  p{margin:0;}
+  .wrap{max-width:1120px; margin:0 auto; padding-inline:20px;}
+  .section{padding-block:88px;}
+  @media (max-width:720px){ .section{padding-block:56px;} }
+  .section-soft{background:var(--bg-soft);}
+  .eyebrow{
+    font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--accent-ink); margin-bottom:14px; display:block;
+  }
+  .center{text-align:center;}
+  .lede{max-width:640px; color:var(--ink-soft); font-size:17px; line-height:1.6; margin-top:14px;}
+  .center .lede{margin-inline:auto;}
+
+  /* buttons */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    border-radius:999px; padding:14px 26px; font-family:"Inter",sans-serif; font-weight:600; font-size:15px;
+    border:1px solid transparent; cursor:pointer; text-decoration:none; white-space:nowrap;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--accent); color:#fff;}
+  .btn-primary:hover{box-shadow:0 10px 24px -10px var(--accent);}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--line);}
+  .btn-ghost:hover{background:var(--bg-soft);}
+  .btn-sm{padding:10px 18px; font-size:13.5px;}
+  .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  /* header */
+  header{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:50;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .navbar{display:flex; align-items:center; justify-content:space-between; padding-block:14px;}
+  .logo{
+    font-family:"Unbounded",sans-serif; font-weight:600; font-size:21px; letter-spacing:-.02em;
+    display:inline-flex; align-items:baseline; gap:2px; text-decoration:none; color:var(--ink);
+  }
+  .logo .dot{
+    display:inline-block; width:7px; height:7px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #fff, var(--accent) 70%);
+    margin-left:2px; transform:translateY(-6px);
+  }
+  nav.links{display:flex; gap:28px; align-items:center;}
+  nav.links a{font-size:14.5px; font-weight:500; color:var(--ink-soft); text-decoration:none;}
+  nav.links a:hover{color:var(--ink);}
+  .nav-cta{display:flex; align-items:center; gap:14px;}
+  .menu-btn{display:none; background:none; border:none; padding:6px; cursor:pointer;}
+  @media (max-width:860px){
+    nav.links{display:none;}
+  }
+
+  /* hero */
+  .hero{padding-block:64px 40px; text-align:center;}
+  .badge{
+    display:inline-flex; align-items:center; gap:8px; padding:8px 16px 8px 12px; border-radius:999px;
+    background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow);
+    font-size:13.5px; font-weight:500; color:var(--ink-soft); margin-bottom:28px;
+  }
+  .badge .star{color:var(--amber); font-size:15px;}
+  .hero h1{font-size:clamp(34px,6vw,58px); line-height:1.08; font-weight:600; max-width:820px; margin-inline:auto;}
+  .hero h1 em{font-style:normal; color:var(--accent-ink);}
+  .hero .lede{font-size:18px; margin-top:22px;}
+  .hero-actions{display:flex; gap:14px; justify-content:center; margin-top:34px; flex-wrap:wrap;}
+
+  /* phone mockup */
+  .phone-stage{display:flex; justify-content:center; margin-top:64px;}
+  .phone{
+    width:290px; border-radius:40px; background:var(--surface); border:8px solid var(--ink);
+    box-shadow:var(--shadow); overflow:hidden; position:relative;
+  }
+  :root:not([data-theme="light"]) .phone{border-color:#000;}
+  .phone-notch{
+    position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:22px;
+    background:var(--ink); border-radius:0 0 16px 16px; z-index:2;
+  }
+  :root:not([data-theme="light"]) .phone-notch{background:#000;}
+  .phone-screen{padding:34px 16px 20px; background:linear-gradient(180deg, var(--accent-soft), var(--surface) 55%);}
+  .match-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+  .match-top span{font-size:11px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em;}
+  .match-score{font-size:11px; font-weight:700; background:var(--green); color:#fff; padding:3px 9px; border-radius:999px;}
+  .match-card{background:var(--surface); border-radius:20px; padding:16px; box-shadow:var(--shadow); margin-bottom:14px;}
+  .match-avatar{
+    width:52px; height:52px; border-radius:50%; margin:0 auto 10px;
+    background:conic-gradient(from 120deg, var(--rose), var(--purple), var(--accent), var(--rose));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-family:"Unbounded"; font-weight:600;
+  }
+  .match-card h4{font-family:"Inter"; font-size:14.5px; font-weight:600; text-align:center; margin-bottom:4px;}
+  .match-card .tags{text-align:center; font-size:11.5px; color:var(--ink-soft);}
+  .prod-row{
+    display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line);
+    border-radius:14px; padding:9px 12px; margin-bottom:8px;
+  }
+  .swatch{width:26px; height:26px; border-radius:8px; flex:none;}
+  .prod-row .name{font-size:12.5px; font-weight:600; flex:1;}
+  .prod-row .fit{font-size:10.5px; font-weight:700; color:var(--green);}
+
+  /* manifesto */
+  .manifesto{max-width:760px; margin-inline:auto; text-align:center;}
+  .manifesto p{font-family:"Unbounded",sans-serif; font-weight:500; font-size:clamp(21px,3vw,30px); line-height:1.5; color:var(--ink);}
+  .orb{display:inline-block; width:22px; height:22px; border-radius:50%; vertical-align:-5px; margin:0 3px;}
+  .orb-a{background:radial-gradient(circle at 32% 28%, #fff2, transparent), conic-gradient(from 90deg, var(--purple), var(--accent));}
+  .orb-b{background:radial-gradient(circle at 32% 28%, #fff2, transparent), conic-gradient(from 90deg, var(--rose), var(--amber));}
+  .orb-c{background:radial-gradient(circle at 32% 28%, #fff2, transparent), conic-gradient(from 90deg, var(--teal), var(--green));}
+  .orb-d{background:radial-gradient(circle at 32% 28%, #fff2, transparent), conic-gradient(from 90deg, var(--sky), var(--mint));}
+
+  /* concern grid */
+  .concern-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:44px;}
+  @media (max-width:860px){ .concern-grid{grid-template-columns:repeat(2,1fr);} }
+  .concern-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:22px 16px; text-align:center; box-shadow:var(--shadow);
+  }
+  .concern-card .orb-lg{width:34px; height:34px; border-radius:50%; margin:0 auto 12px;}
+  .concern-card h4{font-family:"Inter"; font-size:14.5px; font-weight:600;}
+
+  /* timeline */
+  .timeline-wrap{position:relative; max-width:520px; margin:56px auto 0; padding-left:28px;}
+  .timeline-line{position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:var(--line);}
+  .t-item{position:relative; padding-bottom:34px; display:flex; align-items:center; gap:16px;}
+  .t-item:last-child{padding-bottom:0;}
+  .t-dot{
+    position:absolute; left:-28px; top:2px; width:14px; height:14px; border-radius:50%;
+    background:var(--accent); border:3px solid var(--bg-soft);
+  }
+  .t-month{width:44px; flex:none; font-size:13px; font-weight:600; color:var(--ink-faint);}
+  .t-card{
+    flex:1; background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:12px 14px; display:flex; align-items:center; gap:12px; box-shadow:var(--shadow);
+  }
+  .t-avatar{
+    width:34px; height:34px; border-radius:50%; flex:none; color:#fff; display:flex; align-items:center;
+    justify-content:center; font-family:"Unbounded"; font-size:12px; font-weight:600;
+  }
+  .t-text{font-size:13.5px; font-weight:500;}
+  .t-text small{display:block; font-weight:400; color:var(--ink-soft); font-size:12px; margin-top:1px;}
+
+  /* how it works */
+  .how-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:48px;}
+  @media (max-width:860px){ .how-grid{grid-template-columns:1fr;} }
+  .step{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); padding:26px; box-shadow:var(--shadow);}
+  .step-num{
+    width:32px; height:32px; border-radius:10px; background:var(--accent-soft); color:var(--accent-ink);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-family:"Unbounded"; font-size:14px;
+    margin-bottom:16px;
+  }
+  .step h4{font-family:"Inter"; font-size:16px; font-weight:600; margin-bottom:8px;}
+  .step p{font-size:14px; color:var(--ink-soft); line-height:1.55;}
+
+  .concept-tag{
+    display:inline-block; font-size:12px; font-weight:600; color:var(--ink-faint); margin-top:10px;
+    border:1px dashed var(--line); padding:5px 12px; border-radius:999px;
+  }
+
+  /* carousel */
+  .carousel{display:flex; gap:16px; overflow-x:auto; padding:6px 4px 18px; margin-top:8px; scroll-snap-type:x mandatory;}
+  .carousel::-webkit-scrollbar{height:6px;}
+  .carousel::-webkit-scrollbar-thumb{background:var(--line); border-radius:999px;}
+  .p-card{
+    flex:none; width:210px; scroll-snap-align:start; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius-md); padding:16px; box-shadow:var(--shadow);
+  }
+  .p-badge{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; padding:5px 10px; border-radius:999px; margin-bottom:14px;}
+  .p-badge.gr{background:#E4F6EC; color:var(--green);}
+  .p-badge.sk{background:#E4F3FC; color:var(--sky);}
+  .p-badge.am{background:#FBF0DC; color:var(--amber);}
+  :root:not([data-theme="light"]) .p-badge.gr{background:#173025; color:#7BE0AC;}
+  :root:not([data-theme="light"]) .p-badge.sk{background:#122A3B; color:#7CC7F2;}
+  :root:not([data-theme="light"]) .p-badge.am{background:#332810; color:#F0CD86;}
+  .p-swatch{width:100%; height:80px; border-radius:14px; margin-bottom:12px;}
+  .p-card h5{font-family:"Inter"; font-size:13.5px; font-weight:600; margin-bottom:4px;}
+  .p-card .fit-line{font-size:12px; color:var(--ink-soft);}
+
+  /* chat */
+  .chat-panel{
+    max-width:560px; margin:48px auto 0; background:linear-gradient(160deg, var(--accent-soft), var(--bg-soft));
+    border-radius:var(--radius-lg); padding:30px 22px; border:1px solid var(--accent-soft-line);
+  }
+  .bubble-row{display:flex; gap:10px; margin-bottom:14px; align-items:flex-end;}
+  .bubble-row.me{flex-direction:row-reverse;}
+  .b-avatar{width:30px; height:30px; border-radius:50%; flex:none; color:#fff; display:flex; align-items:center; justify-content:center; font-family:"Unbounded"; font-size:11px; font-weight:600;}
+  .bubble{max-width:74%; background:var(--surface); padding:12px 15px; border-radius:16px; font-size:14px; line-height:1.5; box-shadow:var(--shadow);}
+  .bubble-row.me .bubble{background:var(--accent); color:#fff;}
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;}
+  .sugg-chip{background:var(--surface); border:1px solid var(--accent-soft-line); color:var(--accent-ink); font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:999px;}
+
+  /* trust */
+  .trust-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:44px;}
+  @media (max-width:860px){ .trust-grid{grid-template-columns:1fr;} }
+  .trust-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); padding:24px; box-shadow:var(--shadow);}
+  .trust-icon{width:40px; height:40px; border-radius:12px; background:var(--accent-soft); margin-bottom:16px; display:flex; align-items:center; justify-content:center;}
+  .trust-card h4{font-family:"Inter"; font-size:15px; font-weight:600; margin-bottom:8px;}
+  .trust-card p{font-size:13.5px; color:var(--ink-soft); line-height:1.55;}
+
+  /* scenarios */
+  .scenario-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:44px;}
+  @media (max-width:720px){ .scenario-grid{grid-template-columns:1fr;} }
+  .scenario-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:20px 22px; font-size:15px; font-weight:500; line-height:1.5; box-shadow:var(--shadow);
+  }
+  .scenario-card::before{content:"—"; color:var(--accent); font-weight:700; margin-right:8px;}
+
+  /* yes/no */
+  .yesno-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:520px; margin:44px auto 0;}
+  @media (max-width:560px){ .yesno-grid{grid-template-columns:1fr;} }
+  .yesno-btn{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:24px; font-family:"Unbounded"; font-size:16px; font-weight:500; cursor:pointer; box-shadow:var(--shadow);
+    color:var(--ink);
+  }
+  .yesno-btn:hover{border-color:var(--accent); color:var(--accent-ink);}
+
+  /* closing panel */
+  .closing{
+    max-width:1120px; margin:0 auto; border-radius:var(--radius-lg);
+    background:
+      radial-gradient(120% 140% at 15% 20%, #F2799A55, transparent 55%),
+      radial-gradient(120% 140% at 85% 80%, #5163FF66, transparent 55%),
+      linear-gradient(160deg, var(--ink), #000);
+    color:#fff; padding:70px 40px; text-align:center;
+  }
+  .closing h2{font-size:clamp(26px,4vw,40px); font-weight:600; max-width:640px; margin-inline:auto;}
+  .closing .lede{color:#D9D8E6;}
+
+  /* faq */
+  .faq{max-width:720px; margin:44px auto 0;}
+  .faq-item{border-bottom:1px solid var(--line); padding-block:18px;}
+  .faq-item summary{
+    cursor:pointer; font-weight:600; font-size:15.5px; list-style:none; display:flex;
+    justify-content:space-between; align-items:center; gap:16px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary .plus{font-size:20px; color:var(--ink-faint); flex:none; transition:transform .2s ease;}
+  .faq-item[open] summary .plus{transform:rotate(45deg);}
+  .faq-item p{margin-top:12px; font-size:14.5px; color:var(--ink-soft); line-height:1.6;}
+
+  /* signup */
+  .signup-box{
+    max-width:560px; margin:44px auto 0; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius-lg); padding:34px; box-shadow:var(--shadow);
+  }
+  .form-row{display:flex; flex-direction:column; gap:14px;}
+  .field{display:flex; flex-direction:column; gap:6px; text-align:left;}
+  .field label{font-size:12.5px; font-weight:600; color:var(--ink-soft);}
+  .field input{
+    border:1px solid var(--line); background:var(--bg); color:var(--ink); border-radius:12px;
+    padding:13px 15px; font-size:15px; font-family:"Inter"; outline:none;
+  }
+  .field input:focus{border-color:var(--accent);}
+  .form-foot{font-size:12px; color:var(--ink-faint); text-align:left; margin-top:2px;}
+  .success{display:none; text-align:center; padding:12px 0;}
+  .success.show{display:block;}
+  .success h4{font-family:"Unbounded"; font-size:18px; margin-bottom:8px;}
+  .success p{font-size:14px; color:var(--ink-soft);}
+
+  /* footer */
+  footer{border-top:1px solid var(--line); padding-block:44px;}
+  .foot-grid{display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap;}
+  .foot-tag{max-width:280px; font-size:13.5px; color:var(--ink-soft); margin-top:10px; line-height:1.5;}
+  .foot-links{display:flex; gap:26px; flex-wrap:wrap;}
+  .foot-links a{font-size:13.5px; color:var(--ink-soft); text-decoration:none;}
+  .foot-links a:hover{color:var(--ink);}
+  .foot-bottom{margin-top:34px; padding-top:20px; border-top:1px solid var(--line); font-size:12.5px; color:var(--ink-faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap navbar">
+    <a href="#top" class="logo">tw<span style="position:relative;">i<span class="dot"></span></span>nly</a>
+    <nav class="links">
+      <a href="#how">Как это работает</a>
+      <a href="#concerns">С чем поможет</a>
+      <a href="#community">Комьюнити</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#signup" class="btn btn-primary btn-sm">Ранний доступ</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero wrap">
+    <span class="badge"><span class="star">✦</span> Строим вместе с первыми, кому это нужно</span>
+    <h1>AI находит твоих <em>бьюти-двойников</em> — и то, что им правда помогло</h1>
+    <p class="lede center" style="margin-inline:auto;">Пройди тест за 2 минуты — и увидишь людей с похожей кожей, волосами, бюджетом и климатом. Смотри их подтверждённый по датам путь, а не случайный отзыв из интернета.</p>
+    <div class="hero-actions">
+      <a href="#signup" class="btn btn-primary">Оставить email</a>
+      <a href="#how" class="btn btn-ghost">Как это работает</a>
+    </div>
+
+    <div class="phone-stage">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="match-top"><span>Твой двойник найден</span><span class="match-score">94% совпадение</span></div>
+          <div class="match-card">
+            <div class="match-avatar">А.</div>
+            <h4>Аня, 27 лет</h4>
+            <p class="tags">Постакне · 8 мес · Комбинированная кожа</p>
+          </div>
+          <div class="prod-row"><div class="swatch" style="background:var(--rose);"></div><div class="name">Сыворотка с азелаиновой к-той</div><div class="fit">34/40</div></div>
+          <div class="prod-row"><div class="swatch" style="background:var(--sky);"></div><div class="name">SPF без белого налёта</div><div class="fit">29/40</div></div>
+          <div class="prod-row"><div class="swatch" style="background:var(--amber);"></div><div class="name">Некомедогенный крем</div><div class="fit">31/40</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="manifesto wrap">
+      <p>
+        Twinly — это про то, что твоя проблема с кожей или волосами почти наверняка не уникальна.
+        Пройди<span class="orb orb-a"></span>тест, найди<span class="orb orb-b"></span>своих двойников
+        с похожим типом кожи и бюджетом, смотри<span class="orb orb-c"></span>их реальный путь по месяцам
+        и получай<span class="orb orb-d"></span>то, что действительно сработает — без рекламы и завышенных ожиданий.
+      </p>
+    </div>
+  </section>
+
+  <section id="concerns" class="section section-soft">
+    <div class="wrap center">
+      <span class="eyebrow">С чем поможет</span>
+      <h2 style="font-size:clamp(26px,4vw,38px);">Найдём твоих двойников<br>по любой теме</h2>
+    </div>
+    <div class="wrap">
+      <div class="concern-grid">
+        <div class="concern-card"><div class="orb-lg" style="background:var(--rose);"></div><h4>Акне и постакне</h4></div>
+        <div class="concern-card"><div class="orb-lg" style="background:var(--sky);"></div><h4>Сухость и обезвоженность</h4></div>
+        <div class="concern-card"><div class="orb-lg" style="background:var(--teal);"></div><h4>Выпадение волос</h4></div>
+        <div class="concern-card"><div class="orb-lg" style="background:var(--amber);"></div><h4>Пигментация</h4></div>
+        <div class="concern-card"><div class="orb-lg" style="background:var(--purple);"></div><h4>Первые морщины</h4></div>
+        <div class="concern-card"><div class="orb-lg" style="background:var(--mint);"></div><h4>Чувствительная кожа</h4></div>
+        <div class="concern-card"><div class="orb-lg" style="background:linear-gradient(135deg,var(--rose),var(--purple));"></div><h4>Уход после родов</h4></div>
+        <div class="concern-card"><div class="orb-lg" style="background:var(--olive);"></div><h4>Смена климата и города</h4></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap center">
+      <span class="eyebrow">Не отзыв, а история</span>
+      <h2 style="font-size:clamp(26px,4vw,38px);">Смотри путь двойника<br>по месяцам, а не по одному посту</h2>
+      <p class="lede">Даты и фото привязаны к аккаунту с самого начала — задним числом историю не перепишешь, в отличие от отзыва на маркетплейсе.</p>
+    </div>
+    <div class="timeline-wrap">
+      <div class="timeline-line"></div>
+      <div class="t-item">
+        <div class="t-dot"></div><div class="t-month">Янв</div>
+        <div class="t-card"><div class="t-avatar" style="background:var(--accent);">К.</div><div class="t-text">Начала ретинол 0.2%<small>Катя, чувствительная кожа</small></div></div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot"></div><div class="t-month">Мар</div>
+        <div class="t-card"><div class="t-avatar" style="background:var(--rose);">К.</div><div class="t-text">Шелушение и привыкание<small>отметила в дневнике сама</small></div></div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot"></div><div class="t-month">Июн</div>
+        <div class="t-card"><div class="t-avatar" style="background:var(--teal);">К.</div><div class="t-text">Первые заметные улучшения<small>добавила увлажнение утром</small></div></div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot"></div><div class="t-month">Окт</div>
+        <div class="t-card"><div class="t-avatar" style="background:var(--amber);">К.</div><div class="t-text">Постакне почти не видно<small>полный список средств — в профиле</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="section section-soft">
+    <div class="wrap center">
+      <span class="eyebrow">Как это работает</span>
+      <h2 style="font-size:clamp(26px,4vw,38px);">Три шага вместо часов<br>в комментариях у блогеров</h2>
+    </div>
+    <div class="wrap">
+      <div class="how-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Пройди тест</h4>
+          <p>2 минуты: тип кожи и волос, климат, бюджет и главная проблема прямо сейчас.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>Найди двойников</h4>
+          <p>Система показывает людей с похожим профилем и их подтверждённую по датам историю.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>Смотри, что сработало</h4>
+          <p>Список средств с честным «сработало у X из Y» — без спонсорских мест в выдаче.</p>
+        </div>
+      </div>
+
+      <div class="center" style="margin-top:56px;">
+        <span class="concept-tag">Превью функции — так будет выглядеть карточка совпадения</span>
+      </div>
+      <div class="carousel" style="margin-top:20px;">
+        <div class="p-card">
+          <span class="p-badge gr">Выбор двойников</span>
+          <div class="p-swatch" style="background:linear-gradient(135deg,var(--rose),var(--amber));"></div>
+          <h5>Сыворотка с азелаиновой кислотой</h5>
+          <p class="fit-line">сработало у 34 из 40 похожих</p>
+        </div>
+        <div class="p-card">
+          <span class="p-badge sk">Лучшая цена</span>
+          <div class="p-swatch" style="background:linear-gradient(135deg,var(--sky),var(--teal));"></div>
+          <h5>SPF без белого налёта</h5>
+          <p class="fit-line">сработало у 29 из 40 похожих</p>
+        </div>
+        <div class="p-card">
+          <span class="p-badge am">Быстрый результат</span>
+          <div class="p-swatch" style="background:linear-gradient(135deg,var(--amber),var(--olive));"></div>
+          <h5>Некомедогенный дневной крем</h5>
+          <p class="fit-line">сработало у 31 из 40 похожих</p>
+        </div>
+        <div class="p-card">
+          <span class="p-badge gr">Выбор двойников</span>
+          <div class="p-swatch" style="background:linear-gradient(135deg,var(--purple),var(--accent));"></div>
+          <h5>Мицеллярный гель без спирта</h5>
+          <p class="fit-line">сработало у 37 из 40 похожих</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="community" class="section">
+    <div class="wrap center">
+      <span class="eyebrow">Комьюнити</span>
+      <h2 style="font-size:clamp(26px,4vw,38px);">Вопрос своим двойникам,<br>а не комментарий под рекламой</h2>
+    </div>
+    <div class="chat-panel">
+      <div class="bubble-row me">
+        <div class="b-avatar" style="background:var(--accent);">Т</div>
+        <div class="bubble">У тебя было так же на 2 месяце ретинола — шелушение прошло само?</div>
+      </div>
+      <div class="bubble-row">
+        <div class="b-avatar" style="background:var(--rose);">К</div>
+        <div class="bubble">Да! К 6 неделе стало заметно лучше — добавила увлажнение утром, вот что использовала 👇</div>
+      </div>
+      <div class="chip-row">
+        <span class="sugg-chip">Спросить у своих двойников</span>
+        <span class="sugg-chip">Найти новых с похожим типом кожи</span>
+        <span class="sugg-chip">Что чаще всего помогает при постакне?</span>
+      </div>
+    </div>
+    <div class="center" style="margin-top:18px;">
+      <span class="concept-tag">Пример переписки — концепт функции</span>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap center">
+      <span class="eyebrow">Почему можно доверять</span>
+      <h2 style="font-size:clamp(26px,4vw,38px);">Экспертиза, а не только алгоритм</h2>
+    </div>
+    <div class="wrap">
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-icon"><div style="width:16px;height:16px;border-radius:50%;background:var(--accent);"></div></div>
+          <h4>Кураторы-косметологи</h4>
+          <p>Проверяют самые обсуждаемые рутины, прежде чем те попадут в топ рекомендаций.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon"><div style="width:16px;height:16px;border-radius:50%;background:var(--rose);"></div></div>
+          <h4>Проверка по датам</h4>
+          <p>Фото и записи привязаны к истории аккаунта — задним числом историю не добавить.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon"><div style="width:16px;height:16px;border-radius:50%;background:var(--teal);"></div></div>
+          <h4>Без платных мест</h4>
+          <p>Ни один бренд не может купить попадание в топ рекомендаций — только реальные совпадения.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap center">
+      <span class="eyebrow">Знакомо?</span>
+      <h2 style="font-size:clamp(26px,4vw,38px);">Скорее всего, ты уже<br>делаешь часть этой работы вручную</h2>
+    </div>
+    <div class="wrap">
+      <div class="scenario-grid">
+        <div class="scenario-card">Часами читаешь отзывы на маркетплейсе и не понимаешь, кому верить</div>
+        <div class="scenario-card">Купила средство по совету блогера — а оно не подошло именно твоей коже</div>
+        <div class="scenario-card">Спрашиваешь у знакомых в переписке, было ли у них так же</div>
+        <div class="scenario-card">Хочешь сравнить свой прогресс с кем-то, кто уже прошёл этот путь</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap center">
+      <h2 style="font-size:clamp(24px,3.6vw,32px);">Готова доверять не рекламе, а реальным историям?</h2>
+      <div class="yesno-grid">
+        <button class="yesno-btn" data-goto="#signup">Да, хочу первой</button>
+        <button class="yesno-btn" data-goto="#signup">Пока присматриваюсь</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="closing">
+      <h2>Twinly — это как спросить у подруги, только подруг у тебя теперь тысячи</h2>
+      <p class="lede center" style="margin-inline:auto; margin-top:16px;">Оставь email — и будешь среди тех, кто определит, каким Twinly станет с первого дня.</p>
+    </div>
+  </section>
+
+  <section id="faq" class="section">
+    <div class="wrap center">
+      <span class="eyebrow">FAQ</span>
+      <h2 style="font-size:clamp(26px,4vw,38px);">Частые вопросы</h2>
+    </div>
+    <div class="faq">
+      <details class="faq-item" open>
+        <summary>Что такое Twinly? <span class="plus">+</span></summary>
+        <p>Сервис, который помогает найти людей с похожим типом кожи, волос, бюджетом и климатом — и посмотреть их подтверждённый по датам уход, вместо случайного совета из интернета.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Это будет бесплатно? <span class="plus">+</span></summary>
+        <p>Поиск двойников и лента — бесплатно. Часть расширенных функций может стать платной после запуска — решим по обратной связи от первых пользователей.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Как вы проверяете, что истории настоящие? <span class="plus">+</span></summary>
+        <p>Фото и записи привязаны к дате и истории аккаунта — добавить их задним числом нельзя. Это и отличает Twinly от накрученных отзывов.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Вы продвигаете конкретные бренды? <span class="plus">+</span></summary>
+        <p>Нет. Рекомендации собираются от пользователей, а не покупаются брендами — платных мест в выдаче нет.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Когда запуск? <span class="plus">+</span></summary>
+        <p>Сейчас мы собираем первый список тех, кому это интересно, чтобы понять, каким Twinly должен быть с первого дня. Оставь email — напишем одной из первых.</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="signup" class="section section-soft">
+    <div class="wrap center">
+      <span class="eyebrow">Ранний доступ</span>
+      <h2 style="font-size:clamp(26px,4vw,38px);">Будь среди первых</h2>
+      <p class="lede">Мы ещё строим Twinly — и хотим строить его вместе с теми, кому это правда нужно.</p>
+    </div>
+    <div class="signup-box">
+      <form id="signupForm" class="form-row">
+        <div class="field">
+          <label for="f-name">Имя (необязательно)</label>
+          <input id="f-name" type="text" name="name" autocomplete="name" placeholder="Как к тебе обращаться">
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" type="email" name="email" autocomplete="email" required placeholder="you@mail.com">
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top:6px;">Оставить заявку</button>
+        <p class="form-foot">Нажимая «Оставить заявку», ты откроешь письмо своему почтовому клиенту, адресованное команде Twinly — так заявка дойдёт до нас напрямую.</p>
+      </form>
+      <div id="signupSuccess" class="success">
+        <h4>Спасибо!</h4>
+        <p>Если почтовый клиент не открылся сам — просто напиши на <strong>rutagogo6@gmail.com</strong>, и мы ответим лично.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#top" class="logo">tw<span style="position:relative;">i<span class="dot"></span></span>nly</a>
+        <p class="foot-tag">Сделано двумя подругами, которые сами устали гадать, что подойдёт коже.</p>
+      </div>
+      <div class="foot-links">
+        <a href="#how">Как это работает</a>
+        <a href="#concerns">С чем поможет</a>
+        <a href="#faq">FAQ</a>
+        <a href="#signup">Ранний доступ</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>2026 © Twinly</span>
+      <span>Концепт-лендинг для проверки идеи</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('[data-goto]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var sel = btn.getAttribute('data-goto');
+      var el = document.querySelector(sel);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  var form = document.getElementById('signupForm');
+  var success = document.getElementById('signupSuccess');
+  if(form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = document.getElementById('f-name').value.trim();
+      var email = document.getElementById('f-email').value.trim();
+      if(!email) return;
+      var subject = encodeURIComponent('Заявка на ранний доступ Twinly');
+      var body = encodeURIComponent(
+        'Имя: ' + (name || '—') + '\n' +
+        'Email: ' + email + '\n' +
+        'Источник: лендинг Twinly'
+      );
+      try{
+        window.location.href = 'mailto:rutagogo6@gmail.com?subject=' + subject + '&body=' + body;
+      }catch(err){}
+      form.hidden = true;
+      success.classList.add('show');
+    });
+  }
+</script>
+</body>
+</html>
